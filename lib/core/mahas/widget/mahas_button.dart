@@ -59,8 +59,6 @@ class MahasButton extends StatelessWidget {
         return _buildTextButton(buttonChild);
       case ButtonType.icon:
         return _buildIconButton(buttonChild);
-      default:
-        return _buildElevatedButton(buttonChild);
     }
   }
 

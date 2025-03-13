@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../services/helper.dart';
+import '../../helper/helper.dart';
 import 'input_box_component.dart';
 
 class CheckboxMultipleItem {

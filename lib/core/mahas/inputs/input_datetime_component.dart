@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../services/mahas_format.dart';
+import '../../utils/mahas_format.dart';
 import 'input_box_component.dart';
 
 class InputDatetimeController {

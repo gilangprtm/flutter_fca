@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../mahas_colors.dart';
+
+import '../mahas_colors.dart';
 
 class EmptyComponent extends StatelessWidget {
   final VoidCallback? onPressed;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../mahas_colors.dart';
+import '../mahas_colors.dart';
 import '../mahas_themes.dart';
 import 'input_box_component.dart';
 

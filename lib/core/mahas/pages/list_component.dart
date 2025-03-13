@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../../mahas_config.dart';
-import '../../models/api_list_resut_model.dart';
-import '../../services/helper.dart';
-import '../../services/http_api.dart';
+import '../../../data/datasource/network/db/http_api.dart';
+import '../../helper/dialog_helper.dart';
 import '../inputs/input_text_component.dart';
+import '../mahas_config.dart';
+import '../models/api_list_resut_model.dart';
 import 'empty_component.dart';
 import 'shimmer_component.dart';
 
@@ -40,7 +39,6 @@ class ListComponentController<T> {
   Future refresh() async {
     clear();
     await _refreshBottom();
-    Get.focusScope?.unfocus();
     setState(() {});
   }
 
@@ -76,21 +74,11 @@ class ListComponentController<T> {
           result.add(fromDynamic(obj));
         }
       } else {
-        if (MahasConfig.hasInternet == false) {
-          Helper.dialogWarning(
-              "Gagal memuat data, silahkan cek koneksi internet");
-        } else {
-          Helper.dialogWarning("Gagal memuat data");
-        }
+        DialogHelper.showErrorDialog(apiModel.message ?? "");
       }
       return result;
     } catch (ex) {
-      if (MahasConfig.hasInternet == false) {
-        Helper.dialogWarning(
-            "Gagal memuat data, silahkan cek koneksi internet");
-      } else {
-        Helper.dialogWarning("Gagal memuat data");
-      }
+      DialogHelper.showErrorDialog(ex.toString());
       setState(() {
         _isItemRefresh = false;
       });

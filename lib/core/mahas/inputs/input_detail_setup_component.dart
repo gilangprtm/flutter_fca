@@ -3,10 +3,10 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
-import '../../services/helper.dart';
-import '../../mahas_colors.dart';
+import '../../helper/helper.dart';
+import '../mahas_colors.dart';
 import '../mahas_themes.dart';
-import '../others/empty_component.dart';
+import '../pages/empty_component.dart';
 import 'lookup_component.dart';
 
 class DetailSetupItemModel<T> {

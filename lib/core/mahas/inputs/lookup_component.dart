@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../mahas_config.dart';
-import '../../models/api_list_resut_model.dart';
-import '../../services/helper.dart';
-import '../../services/http_api.dart';
-import '../../mahas_colors.dart';
-import '../others/empty_component.dart';
-import '../others/shimmer_component.dart';
+import '../../../data/datasource/network/db/http_api.dart';
+import '../../helper/dialog_helper.dart';
+import '../mahas_colors.dart';
+import '../mahas_config.dart';
+import '../models/api_list_resut_model.dart';
+import '../pages/empty_component.dart';
+import '../pages/shimmer_component.dart';
 import 'input_text_component.dart';
 
 class LookupController<T, U> extends ChangeNotifier {
@@ -124,14 +124,12 @@ class LookupController<T, U> extends ChangeNotifier {
           }
           setState(() {});
         }
-      } else if (MahasConfig.hasInternet == false) {
-        Helper.dialogWarning('Gagal memuat data, silahkan cek konek internet');
+      } else {
+        DialogHelper.showErrorDialog(apiModel.message ?? "");
       }
       return result;
     } catch (ex) {
-      if (MahasConfig.hasInternet == false) {
-        Helper.dialogWarning('Gagal memuat data, silahkan cek konek internet');
-      }
+      DialogHelper.showErrorDialog(ex.toString());
       setState(() {
         _isItemRefresh = false;
       });
@@ -264,14 +262,16 @@ class _LookupComponentState<T, U> extends State<LookupComponent<T, U>> {
       if (mounted) {
         setState(fn);
       }
-    }, context);
+    }, context!);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: widget.controller.backOnPressed,
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        widget.controller.backOnPressed();
+      },
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.title ?? ""),

@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_fca/core/helper/dialog_helper.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:hr_portal/app/mahas/components/inputs/input_box_component.dart';
-import 'package:hr_portal/app/mahas_complement/helper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-import '../../mahas_colors.dart';
+import '../mahas_colors.dart';
+import 'input_box_component.dart';
 
 enum InputFileType { image, pdf, camera, pdfFile }
 
@@ -129,7 +129,7 @@ class InputFileController {
   Future<void> _viewFileOnPressed() async {
     if (strBase64 == null) return;
     if (tipe == InputFileType.pdf) {
-      HelperComp.dialogFullScreen(
+      DialogHelper.dialogFullScreen(
         Expanded(
           child: SizedBox(
             child: Center(
@@ -143,7 +143,7 @@ class InputFileController {
         ),
       );
     } else if (tipe == InputFileType.pdfFile) {
-      HelperComp.dialogFullScreen(
+      DialogHelper.dialogFullScreen(
         Expanded(
           child: SizedBox(
             child: PDFView(
@@ -159,16 +159,16 @@ class InputFileController {
         ),
       );
     } else {
-      HelperComp.dialogCustomWidget(
-        [
-          Container(
+      DialogHelper.dialogFullScreen(
+        Expanded(
+          child: Container(
             child: (tipe == InputFileType.image)
                 ? Image.memory(base64Decode(strBase64!))
                 : (tipe == InputFileType.camera && urlImage == true)
                     ? Image.network(strBase64!)
                     : Image.memory(base64Decode(strBase64!)),
           ),
-        ],
+        ),
       );
     }
   }
@@ -248,7 +248,7 @@ class InputFileComponentState extends State<InputFileComponent> {
   @override
   void initState() {
     widget.controller._required = widget.required;
-    widget.controller._init(setState, context);
+    widget.controller._init(setState, context!);
     super.initState();
   }
 

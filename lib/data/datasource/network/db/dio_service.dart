@@ -1,28 +1,91 @@
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'dart:convert';
 
 import '../../../../core/helper/dialog_helper.dart';
-import '../../../../main.dart';
+import '../../../../core/env/app_environment.dart';
+import '../../../../core/mahas/services/logger_service.dart';
+import '../../../../core/di/service_locator.dart';
 
+/// Enum untuk berbagai tipe URL/endpoint yang digunakan aplikasi
+/// Ini memungkinkan aplikasi untuk menghubungi beberapa API berbeda
 enum UrlType {
   baseUrl,
+  // Tambahkan endpoint lain yang dibutuhkan
+  // contoh:
+  // authApi,
+  // paymentApi,
+  // notificationApi,
 }
 
+/// Strategi caching yang tersedia
+enum CacheStrategy {
+  /// Tidak menggunakan cache, selalu ambil dari network
+  noCache,
+
+  /// Gunakan cache jika ada, jika tidak ambil dari network
+  cacheFirst,
+
+  /// Ambil dari network, update cache jika berhasil
+  networkFirst,
+
+  /// Gunakan cache jika ada, dan update cache dari network di background
+  cacheAndUpdate,
+}
+
+/// Class untuk entry cache
+class _CacheEntry {
+  final dynamic data;
+  final DateTime expiry;
+
+  _CacheEntry({required this.data, required this.expiry});
+
+  /// Mengecek apakah entry sudah expired
+  bool get isExpired => DateTime.now().isAfter(expiry);
+}
+
+/// Service untuk mengelola komunikasi HTTP menggunakan Dio
+///
+/// Class ini bertanggung jawab untuk:
+/// 1. Mengonfigurasi instance Dio untuk berbagai endpoint
+/// 2. Mengelola caching untuk permintaan HTTP
+/// 3. Menangani error dan retries
+///
+/// Catatan: DioService membuat dan mengonfigurasi instance Dio-nya sendiri,
+/// bukan menerima Dio melalui dependency injection. Hal ini disebabkan oleh
+/// kebutuhan untuk menangani berbagai endpoint yang berbeda melalui enum UrlType.
 class DioService {
   final Dio _dio;
-  final context = navigatorKey.currentContext;
+  final LoggerService _logger;
 
+  // Cache storage
+  final Map<String, _CacheEntry> _cache = {};
+
+  // Konfigurasi service
+  final Duration _defaultCacheTime;
+  final bool _enableCache;
+
+  /// Mendapatkan base URL sesuai dengan tipe yang dipilih
+  /// Method static ini memungkinkan fleksibilitas untuk switching antar endpoint
   static String getBaseUrl(UrlType urlType) {
     switch (urlType) {
       case UrlType.baseUrl:
         return "https://reqres.in/api";
-
-      default:
-        return "";
+      // Tambahkan case untuk endpoint lain sesuai kebutuhan
+      // case UrlType.authApi:
+      //   return "https://auth.example.com/api";
     }
   }
 
-  DioService() : _dio = Dio() {
+  /// Constructor DioService yang menginisialisasi dan mengonfigurasi Dio
+  /// Tidak menerima Dio sebagai parameter karena menangani konfigurasi sendiri
+  /// untuk mendukung multiple endpoint
+  DioService({LoggerService? logger})
+      : _dio = Dio(),
+        _logger = logger ?? serviceLocator<LoggerService>(),
+        _enableCache = !AppEnvironment.instance.isProduction ||
+            true, // Gunakan cache bahkan di production
+        _defaultCacheTime = const Duration(minutes: 10) {
     _dio.options = BaseOptions(
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
@@ -39,7 +102,133 @@ class DioService {
     ]);
   }
 
-  Future<Response> get(
+  /// Melakukan GET request dengan caching
+  Future<T> get<T>(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    UrlType urlType = UrlType.baseUrl,
+    CacheStrategy strategy = CacheStrategy.noCache,
+    Duration? cacheDuration,
+    String? cacheKey,
+  }) async {
+    var url = getBaseUrl(urlType) + path;
+
+    // Log request
+    _logger.d('API GET request to $url', tag: 'API');
+
+    // Cek apakah menggunakan cache
+    final useCache = _enableCache && strategy != CacheStrategy.noCache;
+
+    // Generate cache key
+    final effectiveCacheKey =
+        cacheKey ?? _generateCacheKey('GET', url, queryParameters);
+    final effectiveCacheDuration = cacheDuration ?? _defaultCacheTime;
+
+    // Jika cache first dan cache ada + valid, gunakan cache
+    if (useCache && strategy == CacheStrategy.cacheFirst) {
+      final cachedData = _getFromCache<T>(effectiveCacheKey);
+      if (cachedData != null) {
+        _logger.d('Returning cached data for $url', tag: 'API');
+        return cachedData;
+      }
+    }
+
+    try {
+      final response = await _dio.get(
+        url,
+        queryParameters: queryParameters,
+        options: options,
+      );
+
+      // Parse data ke tipe T
+      final data = response.data as T;
+
+      // Simpan ke cache jika menggunakan cache
+      if (useCache) {
+        _saveToCache<T>(effectiveCacheKey, data, effectiveCacheDuration);
+      }
+
+      return data;
+    } catch (e) {
+      // Jika error dan network first tapi ada cache, gunakan cache
+      if (useCache && strategy == CacheStrategy.networkFirst) {
+        final cachedData = _getFromCache<T>(effectiveCacheKey);
+        if (cachedData != null) {
+          _logger.w('Network request failed, using cached data for $url',
+              data: e, tag: 'API');
+          return cachedData;
+        }
+      }
+
+      throw _handleError(e);
+    }
+  }
+
+  Future<T> post<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    UrlType urlType = UrlType.baseUrl,
+  }) async {
+    try {
+      var url = getBaseUrl(urlType) + path;
+      _logger.d('API POST request to $url', tag: 'API');
+
+      final response = await _dio.post(url,
+          data: data, queryParameters: queryParameters, options: options);
+
+      return response.data as T;
+    } catch (e) {
+      _logger.e('Error in API POST request', error: e, tag: 'API');
+      throw _handleError(e);
+    }
+  }
+
+  Future<T> put<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    UrlType urlType = UrlType.baseUrl,
+  }) async {
+    try {
+      var url = getBaseUrl(urlType) + path;
+      _logger.d('API PUT request to $url', tag: 'API');
+
+      final response = await _dio.put(url,
+          data: data, queryParameters: queryParameters, options: options);
+
+      return response.data as T;
+    } catch (e) {
+      _logger.e('Error in API PUT request', error: e, tag: 'API');
+      throw _handleError(e);
+    }
+  }
+
+  Future<T> patch<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    UrlType urlType = UrlType.baseUrl,
+  }) async {
+    try {
+      var url = getBaseUrl(urlType) + path;
+      _logger.d('API PATCH request to $url', tag: 'API');
+
+      final response = await _dio.patch(url,
+          data: data, queryParameters: queryParameters, options: options);
+
+      return response.data as T;
+    } catch (e) {
+      _logger.e('Error in API PATCH request', error: e, tag: 'API');
+      throw _handleError(e);
+    }
+  }
+
+  Future<T> delete<T>(
     String path, {
     Map<String, dynamic>? queryParameters,
     Options? options,
@@ -47,126 +236,156 @@ class DioService {
   }) async {
     try {
       var url = getBaseUrl(urlType) + path;
-      return await _dio.get(url,
+      _logger.d('API DELETE request to $url', tag: 'API');
+
+      final response = await _dio.delete(url,
           queryParameters: queryParameters, options: options);
+
+      return response.data as T;
     } catch (e) {
+      _logger.e('Error in API DELETE request', error: e, tag: 'API');
       throw _handleError(e);
     }
   }
 
-  Future<Response> post(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    UrlType urlType = UrlType.baseUrl,
-  }) async {
-    try {
-      var url = getBaseUrl(urlType) + path;
-      return await _dio.post(url,
-          data: data, queryParameters: queryParameters, options: options);
-    } catch (e) {
-      throw _handleError(e);
-    }
-  }
-
-  Future<Response> put(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    UrlType urlType = UrlType.baseUrl,
-  }) async {
-    try {
-      var url = getBaseUrl(urlType) + path;
-      return await _dio.put(url,
-          data: data, queryParameters: queryParameters, options: options);
-    } catch (e) {
-      throw _handleError(e);
-    }
-  }
-
-  Future<Response> patch(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    UrlType urlType = UrlType.baseUrl,
-  }) async {
-    try {
-      var url = getBaseUrl(urlType) + path;
-      return await _dio.patch(url,
-          data: data, queryParameters: queryParameters, options: options);
-    } catch (e) {
-      throw _handleError(e);
-    }
-  }
-
-  Future<Response> delete(
-    String path, {
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    UrlType urlType = UrlType.baseUrl,
-  }) async {
-    try {
-      var url = getBaseUrl(urlType) + path;
-      return await _dio.delete(url,
-          queryParameters: queryParameters, options: options);
-    } catch (e) {
-      throw _handleError(e);
-    }
-  }
-
-  Future<Response> postFormData(
+  Future<T> postFormData<T>(
     String path,
     FormData formData, {
     UrlType urlType = UrlType.baseUrl,
   }) async {
     try {
       var url = getBaseUrl(urlType) + path;
-      return await _dio.post(
+      _logger.d('API POST FormData request to $url', tag: 'API');
+
+      final response = await _dio.post(
         url,
         data: formData,
         options: Options(
           headers: {'Content-Type': 'multipart/form-data'},
         ),
       );
+
+      return response.data as T;
     } catch (e) {
+      _logger.e('Error in API POST FormData request', error: e, tag: 'API');
       throw _handleError(e);
     }
   }
 
-  Future<Response> putFormData(
+  Future<T> putFormData<T>(
     String path,
     FormData formData, {
     UrlType urlType = UrlType.baseUrl,
   }) async {
     try {
       var url = getBaseUrl(urlType) + path;
-      return await _dio.put(
+      _logger.d('API PUT FormData request to $url', tag: 'API');
+
+      final response = await _dio.put(
         url,
         data: formData,
         options: Options(
           headers: {'Content-Type': 'multipart/form-data'},
         ),
       );
+
+      return response.data as T;
     } catch (e) {
+      _logger.e('Error in API PUT FormData request', error: e, tag: 'API');
       throw _handleError(e);
     }
   }
 
-  Future<Response> patchFormData(String path, FormData formData) async {
+  Future<T> patchFormData<T>(
+    String path,
+    FormData formData, {
+    UrlType urlType = UrlType.baseUrl,
+  }) async {
     try {
-      return await _dio.patch(
-        path,
+      var url = getBaseUrl(urlType) + path;
+      _logger.d('API PATCH FormData request to $url', tag: 'API');
+
+      final response = await _dio.patch(
+        url,
         data: formData,
         options: Options(
           headers: {'Content-Type': 'multipart/form-data'},
         ),
       );
+
+      return response.data as T;
     } catch (e) {
+      _logger.e('Error in API PATCH FormData request', error: e, tag: 'API');
       throw _handleError(e);
     }
+  }
+
+  /// Membersihkan seluruh cache
+  void clearCache() {
+    _cache.clear();
+    _logger.i('API cache cleared', tag: 'API');
+  }
+
+  /// Membersihkan cache berdasarkan key
+  void clearCacheForKey(String key) {
+    if (_cache.containsKey(key)) {
+      _cache.remove(key);
+      _logger.d('Cache cleared for key: $key', tag: 'API');
+    }
+  }
+
+  /// Membersihkan cache berdasarkan endpoint
+  void clearCacheForEndpoint(String endpoint) {
+    final keysToRemove =
+        _cache.keys.where((key) => key.contains(endpoint)).toList();
+
+    for (final key in keysToRemove) {
+      _cache.remove(key);
+    }
+
+    _logger.d(
+        'Cache cleared for endpoint: $endpoint (${keysToRemove.length} entries)',
+        tag: 'API');
+  }
+
+  /// Generate cache key dari request parameters
+  String _generateCacheKey(
+      String method, String endpoint, Map<String, dynamic>? queryParams) {
+    if (queryParams == null || queryParams.isEmpty) {
+      return '$method:$endpoint';
+    }
+
+    // Sort query params agar key konsisten
+    final sortedParams = queryParams.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+
+    // Encode params ke JSON string
+    final paramsString =
+        jsonEncode(sortedParams.map((e) => '${e.key}=${e.value}').toList());
+
+    return '$method:$endpoint:$paramsString';
+  }
+
+  /// Ambil data dari cache
+  T? _getFromCache<T>(String key) {
+    final entry = _cache[key];
+
+    // Jika tidak ada di cache atau expired, return null
+    if (entry == null || entry.isExpired) {
+      if (entry?.isExpired == true) {
+        _logger.d('Cache expired for key: $key', tag: 'API');
+      }
+      return null;
+    }
+
+    return entry.data as T?;
+  }
+
+  /// Simpan data ke cache
+  void _saveToCache<T>(String key, T data, Duration cacheDuration) {
+    final expiry = DateTime.now().add(cacheDuration);
+    _cache[key] = _CacheEntry(data: data, expiry: expiry);
+    _logger.d('Data cached for key: $key (expires: $expiry)', tag: 'API');
   }
 
   // Updated error handling with DioException
@@ -201,7 +420,6 @@ class DioService {
           break;
       }
       DialogHelper.showErrorDialog(
-        context!,
         message,
       );
       return DioException(

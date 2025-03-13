@@ -282,7 +282,6 @@ class MahasMenuBarState extends State<MahasMenuBar> {
         showText = isSelected;
         break;
       case TextVisibility.showAllText:
-      default:
         showText = true;
     }
 
@@ -358,7 +357,7 @@ class MahasMenuBarState extends State<MahasMenuBar> {
                 width: 50,
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? widget.selectedColor!.withOpacity(0.1)
+                      ? widget.selectedColor!.withValues(alpha: 0.1)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(16.0),
                 ),
@@ -390,8 +389,6 @@ class MahasMenuBarState extends State<MahasMenuBar> {
               color: isSelected ? widget.selectedColor : widget.unselectedColor,
               size: isSelected ? 28.0 : 24.0),
         );
-      default:
-        return Container();
     }
   }
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import '../../mahas_colors.dart';
-import '../../services/currency_input_formater.dart';
-import '../../services/mahas_format.dart';
+import '../../utils/currency_input_formater.dart';
+import '../../utils/mahas_format.dart';
+import '../mahas_colors.dart';
 import '../mahas_themes.dart';
 import 'input_box_component.dart';
 

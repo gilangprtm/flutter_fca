@@ -7,7 +7,7 @@ import 'app_routes.dart';
 class AppRoutesProvider {
   static Map<String, WidgetBuilder> getRoutes() {
     return {
-AppRoutes.home: (context) => const HomePage(),
+      AppRoutes.home: (context) => const HomePage(),
       AppRoutes.informasiAbsensi: (context) => const InformasiAbsensiPage(),
     };
   }

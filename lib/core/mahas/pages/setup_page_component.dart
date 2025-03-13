@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
-import 'package:hr_portal/app/mahas/mahas_service.dart';
-import '../../models/api_result_model.dart';
-import '../../services/helper.dart';
-import '../../services/http_api.dart';
-import '../others/shimmer_component.dart';
+
+import '../../../data/datasource/network/db/http_api.dart';
+import '../../helper/dialog_helper.dart';
+import '../../helper/helper.dart';
+import '../../utils/mahas.dart';
+import '../models/api_result_model.dart';
+import 'shimmer_component.dart';
 
 enum SetupPageState {
   create,
@@ -99,7 +99,7 @@ class SetupPageController<T> extends ChangeNotifier {
     if (initState != null) {
       await initState!();
     }
-    dynamic idX = itemKey(Get.parameters);
+    dynamic idX = itemKey(Mahas.parameters());
     if (onInit != null) {
       await onInit!();
     }
@@ -125,18 +125,7 @@ class SetupPageController<T> extends ChangeNotifier {
           apiToView!(r.body);
         });
       } else {
-        bool noInternet =
-            MahasService.isInternetCausedError(r.message.toString());
-        if (!noInternet) {
-          if (r.statusCode == 404) {
-            Helper.dialogWarning("Data tidak ditemukan atau sudah dihapus!");
-          } else {
-            Helper.dialogWarning(r.message);
-          }
-        } else {
-          Helper.dialogWarning(
-              "Gagal memuat data, silahkan cek koneksi internet");
-        }
+        DialogHelper.showErrorDialog(r.message ?? "");
       }
     } else {
       setState(() {
@@ -171,10 +160,8 @@ class SetupPageController<T> extends ChangeNotifier {
       editable = false;
       setState(() {});
     } else if (v == deleteCaption) {
-      final r = await Helper.dialogQuestion(
+      final r = await DialogHelper.showConfirmationDialog(
         message: deleteDescription,
-        icon: FontAwesomeIcons.trash,
-        textConfirm: deleteCaption,
       );
       if (r == true) {
         if (EasyLoading.isShow) return;
@@ -190,17 +177,8 @@ class SetupPageController<T> extends ChangeNotifier {
             _backRefresh = true;
             _back();
           }
-        }
-        bool noInternet =
-            MahasService.isInternetCausedError(r.message.toString());
-        if (!noInternet) {
-          if (r.statusCode == 404) {
-            Helper.dialogWarning("Data tidak ditemukan atau sudah dihapus!");
-          } else if (r.message != null) {
-            Helper.dialogWarning(r.message);
-          }
         } else {
-          Helper.dialogWarning(
+          DialogHelper.showErrorDialog(
               "Gagal menghapus data, silahkan cek koneksi internet");
         }
       }
@@ -253,22 +231,12 @@ class SetupPageController<T> extends ChangeNotifier {
             await _getModelFromApi(_id);
             editable = false;
             if (successMessage != null) {
-              Helper.dialogSuccess(successMessage);
+              DialogHelper.showSuccessDialog(message: successMessage ?? "");
             }
           }
         } else {
-          bool noInternet =
-              MahasService.isInternetCausedError(r.message.toString());
-          if (!noInternet) {
-            if (r.statusCode == 404) {
-              Helper.dialogWarning("Data tidak ditemukan atau sudah dihapus!");
-            } else {
-              Helper.dialogWarning(r.message);
-            }
-          } else {
-            Helper.dialogWarning(
-                "Gagal menyimpan data, silahkan cek koneksi internet");
-          }
+          DialogHelper.showErrorDialog(
+              "Gagal menyimpan data, silahkan cek koneksi internet");
           setState(() {
             editable = true;
           });
@@ -332,8 +300,10 @@ class _SetupPageComponentState extends State<SetupPageComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: widget.controller.backAction ?? widget.controller._onWillPop,
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        widget.controller.backAction ?? widget.controller._onWillPop();
+      },
       child: Scaffold(
         appBar: !widget.showAppBar
             ? null

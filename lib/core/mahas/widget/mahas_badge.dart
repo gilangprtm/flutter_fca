@@ -114,8 +114,6 @@ class MahasBadgeWith extends StatelessWidget {
         return _BadgePosition(bottom: 0, right: 0);
       case BadgePosition.center:
         return _BadgePosition();
-      default:
-        return _BadgePosition(top: 0, right: 0);
     }
   }
 }
