@@ -3,13 +3,8 @@ import '../../../../core/mahas/services/logger_service.dart';
 
 /// Base repository class that provides common functionality for all repositories
 abstract class BaseRepository {
-  final DioService dioService;
-  final LoggerService logger;
-
-  BaseRepository({
-    required this.dioService,
-    required this.logger,
-  });
+  final DioService dioService = DioService();
+  final LoggerService logger = LoggerService.instance;
 
   /// Log repository operations with appropriate tag
   void logInfo(String message) {

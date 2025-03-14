@@ -1,22 +1,13 @@
-import '../db/dio_service.dart';
-import '../../../../core/mahas/services/logger_service.dart';
 import 'base_repository.dart';
 
 /// HomeRepository yang bertanggung jawab untuk semua endpoint terkait home screen
 class HomeRepository extends BaseRepository {
-  HomeRepository({
-    required DioService dioService,
-    required LoggerService logger,
-  }) : super(dioService: dioService, logger: logger);
-
   /// Get home data including banners, featured items, etc.
-  Future<Map<String, dynamic>> getHomeData() async {
+  Future<dynamic> getHomeData() async {
     logDebug('Getting home data');
     try {
-      final response = await dioService.get<Map<String, dynamic>>(
+      final response = await dioService.get(
         '/home',
-        strategy: CacheStrategy.cacheFirst,
-        cacheDuration: const Duration(minutes: 5),
       );
       logDebug('Successfully retrieved home data');
       return response;
@@ -27,16 +18,14 @@ class HomeRepository extends BaseRepository {
   }
 
   /// Get featured banners
-  Future<List<Map<String, dynamic>>> getBanners() async {
+  Future<dynamic> getBanners() async {
     logDebug('Getting banners');
     try {
-      final response = await dioService.get<Map<String, dynamic>>(
+      final response = await dioService.get(
         '/banners',
-        strategy: CacheStrategy.cacheFirst,
-        cacheDuration: const Duration(minutes: 10),
       );
 
-      final List<dynamic> data = response['data'] as List<dynamic>;
+      final List<dynamic> data = response.data;
       final banners =
           data.map((banner) => banner as Map<String, dynamic>).toList();
 
@@ -49,16 +38,14 @@ class HomeRepository extends BaseRepository {
   }
 
   /// Get featured products
-  Future<List<Map<String, dynamic>>> getFeaturedProducts() async {
+  Future<dynamic> getFeaturedProducts() async {
     logDebug('Getting featured products');
     try {
-      final response = await dioService.get<Map<String, dynamic>>(
+      final response = await dioService.get(
         '/products/featured',
-        strategy: CacheStrategy.cacheFirst,
-        cacheDuration: const Duration(minutes: 15),
       );
 
-      final List<dynamic> data = response['data'] as List<dynamic>;
+      final List<dynamic> data = response.data;
       final products =
           data.map((product) => product as Map<String, dynamic>).toList();
 
@@ -75,14 +62,11 @@ class HomeRepository extends BaseRepository {
   Future<List<Map<String, dynamic>>> getRecentItems() async {
     logDebug('Getting recent items');
     try {
-      final response = await dioService.get<Map<String, dynamic>>(
+      final response = await dioService.get(
         '/items/recent',
-        strategy:
-            CacheStrategy.networkFirst, // Always try to get fresh data first
-        cacheDuration: const Duration(minutes: 5),
       );
 
-      final List<dynamic> data = response['data'] as List<dynamic>;
+      final List<dynamic> data = response.data;
       final items = data.map((item) => item as Map<String, dynamic>).toList();
 
       logDebug('Successfully retrieved ${items.length} recent items');

@@ -13,8 +13,6 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Tentukan environment berdasarkan flag compile/build
   final environment = _determineEnvironment();
 
   // Inisialisasi semua service melalui MahasService
@@ -30,20 +28,11 @@ void main() async {
 
 /// Menentukan environment berdasarkan flag compile
 Environment _determineEnvironment() {
-  // Anda bisa menggunakan flag dari flutter build di sini
-  // Contoh: const bool isProd = bool.fromEnvironment('dart.vm.product');
-
-  // Untuk sementara, kita gunakan pendekatan sederhana
-  // Dalam environment dev, gunakan mode development
   if (kDebugMode) {
     return Environment.development;
-  }
-  // Dalam environment release, gunakan mode production
-  else if (kReleaseMode) {
+  } else if (kReleaseMode) {
     return Environment.production;
-  }
-  // Dalam environment profile, gunakan mode staging
-  else {
+  } else {
     return Environment.staging;
   }
 }

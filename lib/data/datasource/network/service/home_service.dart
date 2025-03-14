@@ -1,26 +1,14 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import '../../../../core/mahas/services/logger_service.dart';
-import '../../network/db/dio_service.dart';
 import '../../../../core/mahas/services/performance_service.dart';
-import '../../../../core/di/service_locator.dart';
 import '../repository/home_repository.dart';
 
 /// Service untuk mengelola logika bisnis terkait home screen
 class HomeService {
-  final HomeRepository _homeRepository;
-  final LoggerService _logger;
-  final PerformanceService _performanceService;
-
-  HomeService({
-    required HomeRepository homeRepository,
-    required LoggerService logger,
-    required PerformanceService performanceService,
-  })  : _homeRepository = homeRepository,
-        _logger = logger,
-        _performanceService = performanceService;
+  final HomeRepository _homeRepository = HomeRepository();
+  final LoggerService _logger = LoggerService.instance;
+  final PerformanceService _performanceService = PerformanceService.instance;
 
   /// Mendapatkan data untuk home screen, termasuk banners dan featured products
   Future<Map<String, dynamic>> getHomeScreenData() async {
