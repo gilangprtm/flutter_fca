@@ -104,9 +104,7 @@ abstract class BaseProvider extends ChangeNotifier {
         _logger.d('Starting async operation: $operationName', tag: logTag);
       }
       final result = await action();
-      if (operationName != null) {
-        _logger.d('Completed async operation: $operationName', tag: logTag);
-      }
+
       return result;
     } catch (e, stackTrace) {
       _logger.e(

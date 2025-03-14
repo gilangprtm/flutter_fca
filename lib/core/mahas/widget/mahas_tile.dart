@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_fca/core/theme/app_color.dart';
 
 import '../mahas_type.dart';
 
@@ -33,7 +34,7 @@ class MahasTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          color: backgroundColor,
+          color: backgroundColor ?? AppColors.white,
           borderRadius: borderRadius,
           boxShadow: const [
             BoxShadow(

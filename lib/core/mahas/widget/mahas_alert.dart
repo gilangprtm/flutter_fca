@@ -92,6 +92,7 @@ class MahasAlertDialog extends StatelessWidget {
               const SizedBox(height: 16),
             if ((showNegativeButton || showPositiveButton) && content != null)
               OverflowBar(
+                alignment: MainAxisAlignment.end,
                 children: <Widget>[
                   if (showNegativeButton)
                     TextButton(

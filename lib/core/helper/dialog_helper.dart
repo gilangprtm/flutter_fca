@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../main.dart';
 import '../mahas/mahas_type.dart';
 import '../mahas/widget/mahas_alert.dart';
+import '../utils/mahas.dart';
 
-final context = navigatorKey.currentContext;
+final context = Mahas.context;
 
 class DialogHelper {
   static void showErrorDialog(String message) {
@@ -14,6 +14,8 @@ class DialogHelper {
         return MahasAlertDialog(
           alertType: AlertType.error,
           content: Text(message),
+          showNegativeButton: false,
+          showPositiveButton: true,
         );
       },
     );
@@ -26,6 +28,8 @@ class DialogHelper {
         return MahasAlertDialog(
           alertType: AlertType.info,
           content: Text(message),
+          showNegativeButton: false,
+          showPositiveButton: true,
         );
       },
     );
@@ -38,6 +42,8 @@ class DialogHelper {
         return MahasAlertDialog(
           alertType: AlertType.succes,
           content: Text(message),
+          showNegativeButton: false,
+          showPositiveButton: true,
         );
       },
     );

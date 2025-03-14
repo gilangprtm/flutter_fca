@@ -1,5 +1,6 @@
 import '../pages/informasi_absensi/informasi_absensi_page.dart';
 import '../pages/home/home_page.dart';
+import '../pages/mahas_showcase_page.dart';
 
 import 'package:flutter/material.dart';
 import 'app_routes.dart';
@@ -9,6 +10,7 @@ class AppRoutesProvider {
     return {
       AppRoutes.home: (context) => const HomePage(),
       AppRoutes.informasiAbsensi: (context) => const InformasiAbsensiPage(),
+      AppRoutes.mahasShowcase: (context) => const MahasShowcasePage(),
     };
   }
 }

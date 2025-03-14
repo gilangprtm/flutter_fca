@@ -1,18 +1,13 @@
-import '../providers/informasi_absensi_provider.dart';
-import '../providers/home_provider.dart';
-
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+
+import '../providers/home_provider.dart';
 
 class AppProviders {
   static List<SingleChildWidget> getProviders() {
     return [
-      ChangeNotifierProvider(
-        create: (_) => HomeProvider(),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => InformasiAbsensiProvider(),
-      ),
+      // provider yg akan selalu aktif selama aplikasi berjalan
+      ChangeNotifierProvider(create: (context) => HomeProvider()),
     ];
   }
 }

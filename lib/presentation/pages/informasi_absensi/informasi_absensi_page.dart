@@ -9,6 +9,7 @@ class InformasiAbsensiPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ProviderPage<InformasiAbsensiProvider>(
+      createProvider: () => InformasiAbsensiProvider(),
       builder: (context, provider) => Scaffold(
         appBar: AppBar(
           title: const Text("Informasi Absensi"),

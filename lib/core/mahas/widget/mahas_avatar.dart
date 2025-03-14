@@ -69,6 +69,13 @@ class MahasAvatar extends StatelessWidget {
         ? Image.network(
             avatarUrl!,
             fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return _buildPlaceholder();
+            },
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return _buildPlaceholder();
+            },
           )
         : _buildPlaceholder();
   }

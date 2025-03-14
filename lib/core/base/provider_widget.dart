@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../utils/mahas.dart';
 import 'base_provider.dart';
 
 /// Widget helper yang secara otomatis menginisialisasi provider dan memanggil
@@ -56,6 +57,14 @@ class _ProviderWidgetState<T extends BaseProvider>
       child: widget.child,
     );
   }
+
+  @override
+  void dispose() {
+    // Clear arguments dan parameters saat widget di-dispose
+    Mahas.clearArguments();
+    Mahas.clearParameters();
+    super.dispose();
+  }
 }
 
 /// Widget helper yang lebih sederhana untuk membungkus seluruh halaman
@@ -63,23 +72,30 @@ class _ProviderWidgetState<T extends BaseProvider>
 class ProviderPage<T extends BaseProvider> extends StatelessWidget {
   final Widget Function(BuildContext context, T provider) builder;
   final Function(T provider)? onInitState;
+  final T Function() createProvider;
 
   const ProviderPage({
     super.key,
     required this.builder,
+    required this.createProvider,
     this.onInitState,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ProviderWidget<T>(
-      onInitProvider: (context, provider) {
+    return ChangeNotifierProvider<T>(
+      create: (context) {
+        final provider = createProvider();
+        // Hanya panggil onInitState sekali di sini
         if (onInitState != null) {
           onInitState!(provider);
         }
         return provider;
       },
-      builder: (context, provider, _) => builder(context, provider),
+      child: ProviderWidget<T>(
+        // Hilangkan pemanggilan onInitState di sini
+        builder: (context, provider, _) => builder(context, provider),
+      ),
     );
   }
 }
