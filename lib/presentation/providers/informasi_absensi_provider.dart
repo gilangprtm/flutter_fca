@@ -32,14 +32,13 @@ class InformasiAbsensiProvider extends BaseProvider {
   }
 
   void incrementCount() {
-    runGuarded(() {
+    function(() {
       _count++;
-      notifyListeners();
     }, operationName: 'incrementCount');
   }
 
   Future<void> fetchInformasiAbsensi() async {
-    await runGuardedAsync(() async {
+    await functionAsync(() async {
       // Implementasi fetch data dari service
       logger.d('Fetching informasi absensi data...', tag: logTag);
       // Add actual implementation here

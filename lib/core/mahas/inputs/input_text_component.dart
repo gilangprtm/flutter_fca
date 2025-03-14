@@ -2,8 +2,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import '../../utils/currency_input_formater.dart';
 import '../../utils/mahas_format.dart';
-import '../mahas_colors.dart';
-import '../mahas_themes.dart';
+import '../../theme/app_color.dart';
+import '../../theme/app_theme.dart';
 import 'input_box_component.dart';
 
 enum InputTextType {
@@ -149,27 +149,26 @@ class _InputTextState extends State<InputTextComponent> {
 
     final decoration = InputDecoration(
       filled: true,
-      fillColor:
-          MahasColors.dark.withValues(alpha: widget.editable ? .01 : .05),
+      fillColor: AppColors.black.withValues(alpha: widget.editable ? .01 : .05),
       hintText: widget.placeHolder,
       isDense: true,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.all(
-            widget.borderRadius ?? Radius.circular(MahasThemes.borderRadius)),
+        borderRadius: BorderRadius.all(widget.borderRadius ??
+            const Radius.circular(AppTheme.borderRadius)),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.all(
-            widget.borderRadius ?? Radius.circular(MahasThemes.borderRadius)),
-        borderSide: const BorderSide(color: MahasColors.dark, width: .1),
+        borderRadius: BorderRadius.all(widget.borderRadius ??
+            const Radius.circular(AppTheme.borderRadius)),
+        borderSide: const BorderSide(color: AppColors.black, width: .1),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.all(
-            widget.borderRadius ?? Radius.circular(MahasThemes.borderRadius)),
-        borderSide: const BorderSide(color: MahasColors.dark, width: .1),
+        borderRadius: BorderRadius.all(widget.borderRadius ??
+            const Radius.circular(AppTheme.borderRadius)),
+        borderSide: const BorderSide(color: AppColors.black, width: .1),
       ),
       prefixText: widget.prefixText,
       prefixStyle: TextStyle(
-        color: MahasColors.dark.withValues(alpha: 0.6),
+        color: AppColors.black.withValues(alpha: 0.6),
       ),
       suffixIconConstraints: const BoxConstraints(
         minHeight: 30,
@@ -186,7 +185,7 @@ class _InputTextState extends State<InputTextComponent> {
                 widget.controller._showPassword
                     ? Icons.visibility_off
                     : Icons.visibility,
-                color: MahasColors.dark.withValues(alpha: 0.6),
+                color: AppColors.black.withValues(alpha: 0.6),
                 size: 14,
               ),
             )
@@ -204,7 +203,7 @@ class _InputTextState extends State<InputTextComponent> {
       onTap: widget.controller.onTap,
       onFieldSubmitted: widget.controller.onFieldSubmitted,
       style: const TextStyle(
-        color: MahasColors.dark,
+        color: AppColors.black,
       ),
       inputFormatters: widget.controller.type == InputTextType.timeHour
           ? [

@@ -39,7 +39,7 @@ abstract class BaseProvider extends ChangeNotifier {
   /// Use this method to initialize state or setup listeners.
   /// This is called by [BaseWidget] during [initState].
   void onInit() {
-    _logger.i('$logTag: onInit called', tag: logTag);
+    _logger.i('onInit called', tag: logTag);
     // To be overridden by subclasses
   }
 
@@ -48,7 +48,7 @@ abstract class BaseProvider extends ChangeNotifier {
   /// Use this method to perform tasks that should happen after the UI is built,
   /// such as fetching initial data.
   void onReady() {
-    _logger.i('$logTag: onReady called', tag: logTag);
+    _logger.i('onReady called', tag: logTag);
     // To be overridden by subclasses
   }
 
@@ -67,12 +67,12 @@ abstract class BaseProvider extends ChangeNotifier {
   /// This method is separated from [dispose] to allow subclasses to perform
   /// custom cleanup without needing to call super.dispose().
   void onClose() {
-    _logger.i('$logTag: onClose called - cleaning up resources', tag: logTag);
+    _logger.i('onClose called - cleaning up resources', tag: logTag);
     // To be overridden by subclasses
   }
 
   /// Helper method for handling synchronous operations with error handling
-  T runGuarded<T>(T Function() action, {String? operationName}) {
+  T function<T>(T Function() action, {String? operationName}) {
     try {
       if (operationName != null) {
         _logger.d('Starting operation: $operationName', tag: logTag);
@@ -90,11 +90,14 @@ abstract class BaseProvider extends ChangeNotifier {
         _errorHandler.handleAsyncError(e, stackTrace, context);
       }
       rethrow;
+    } finally {
+      _logger.d('Completed operation: $operationName', tag: logTag);
+      notifyListeners();
     }
   }
 
   /// Helper method for handling asynchronous operations with error handling
-  Future<T> runGuardedAsync<T>(Future<T> Function() action,
+  Future<T> functionAsync<T>(Future<T> Function() action,
       {String? operationName}) async {
     try {
       if (operationName != null) {
@@ -117,6 +120,9 @@ abstract class BaseProvider extends ChangeNotifier {
         await _errorHandler.handleAsyncError(e, stackTrace, context);
       }
       rethrow;
+    } finally {
+      _logger.d('Completed async operation: $operationName', tag: logTag);
+      notifyListeners();
     }
   }
 }

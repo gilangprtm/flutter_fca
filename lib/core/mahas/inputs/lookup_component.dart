@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../data/datasource/network/db/http_api.dart';
 import '../../helper/dialog_helper.dart';
-import '../mahas_colors.dart';
+import '../../theme/app_color.dart';
 import '../mahas_config.dart';
 import '../models/api_list_resut_model.dart';
 import '../pages/empty_component.dart';
@@ -197,7 +197,7 @@ class LookupController<T, U> extends ChangeNotifier {
             .where((element) => itemValue(element) == itemValue(_items[index]))
             .isEmpty
         ? null
-        : MahasColors.primary.withValues(alpha: .2);
+        : AppColors.primaryColor.withValues(alpha: .2);
   }
 
   String _itemText(int index) {

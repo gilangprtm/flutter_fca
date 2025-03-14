@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../mahas_colors.dart';
-import '../mahas_themes.dart';
+
+import '../../theme/app_color.dart';
+import '../../theme/app_theme.dart';
 import 'input_box_component.dart';
 
 class DropdownItem {
@@ -155,24 +156,24 @@ class _InputDropdownComponentState extends State<InputDropdownComponent> {
       filled: true,
       contentPadding:
           const EdgeInsets.only(top: 12, bottom: 12, left: 10, right: 10),
-      fillColor: MahasColors.dark.withValues(alpha: .01),
+      fillColor: AppColors.black.withValues(alpha: .01),
       isDense: true,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.all(
-            widget.borderRadius ?? Radius.circular(MahasThemes.borderRadius)),
+        borderRadius: BorderRadius.all(widget.borderRadius ??
+            const Radius.circular(AppTheme.borderRadius)),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.all(
-            widget.borderRadius ?? Radius.circular(MahasThemes.borderRadius)),
-        borderSide: const BorderSide(color: MahasColors.dark, width: .1),
+        borderRadius: BorderRadius.all(widget.borderRadius ??
+            const Radius.circular(AppTheme.borderRadius)),
+        borderSide: const BorderSide(color: AppColors.black, width: .1),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.all(
-            widget.borderRadius ?? Radius.circular(MahasThemes.borderRadius)),
-        borderSide: const BorderSide(color: MahasColors.dark, width: .1),
+        borderRadius: BorderRadius.all(widget.borderRadius ??
+            const Radius.circular(AppTheme.borderRadius)),
+        borderSide: const BorderSide(color: AppColors.black, width: .1),
       ),
       prefixStyle: TextStyle(
-        color: MahasColors.light.withValues(alpha: 0.6),
+        color: AppColors.white.withValues(alpha: 0.6),
       ),
       suffixIconConstraints: const BoxConstraints(
         minHeight: 30,
@@ -204,9 +205,9 @@ class _InputDropdownComponentState extends State<InputDropdownComponent> {
                         ))
                     .toList(),
                 style: TextStyle(
-                  color: MahasColors.dark.withValues(alpha: .7),
+                  color: AppColors.black.withValues(alpha: .7),
                 ),
-                dropdownColor: MahasColors.light,
+                dropdownColor: AppColors.white,
                 menuMaxHeight: 300,
               ),
             )

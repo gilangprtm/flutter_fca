@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../mahas_colors.dart';
+import '../../theme/app_color.dart';
 
 class EmptyComponent extends StatelessWidget {
   final VoidCallback? onPressed;
@@ -21,13 +21,13 @@ class EmptyComponent extends StatelessWidget {
           Icon(
             FontAwesomeIcons.boxOpen,
             size: 40,
-            color: MahasColors.dark.withValues(alpha: .3),
+            color: AppColors.black.withValues(alpha: .3),
           ),
           const Padding(padding: EdgeInsets.all(5)),
           Text(
             "Tidak ada data",
             style: TextStyle(
-              color: MahasColors.dark.withValues(alpha: .3),
+              color: AppColors.black.withValues(alpha: .3),
             ),
           ),
           Visibility(

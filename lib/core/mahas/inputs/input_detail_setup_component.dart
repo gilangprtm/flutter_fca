@@ -4,8 +4,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../helper/helper.dart';
-import '../mahas_colors.dart';
-import '../mahas_themes.dart';
+import '../../theme/app_color.dart';
+import '../../theme/app_theme.dart';
+import '../../theme/app_typografi.dart';
 import '../pages/empty_component.dart';
 import 'lookup_component.dart';
 
@@ -161,9 +162,9 @@ class InputDetailSetupControler<T> {
                       visible: editable,
                       child: InkWell(
                         onTap: () => _itemDeleteOnPress(key),
-                        child: Icon(
+                        child: const Icon(
                           Icons.delete_forever,
-                          color: MahasColors.danger,
+                          color: AppColors.errorColor,
                         ),
                       ),
                     ),
@@ -171,9 +172,9 @@ class InputDetailSetupControler<T> {
                 ),
                 InkWell(
                   onTap: () => _itemEditOnPress(key),
-                  child: Text(
+                  child: const Text(
                     "Edit",
-                    style: TextStyle(color: MahasColors.primary),
+                    style: TextStyle(color: AppColors.primaryColor),
                   ),
                 )
               ],
@@ -281,11 +282,11 @@ class _InputDetailSetupComponentState<T>
             padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
             child: Text(
               widget.label ?? "",
-              style: MahasThemes.muted,
+              style: AppTypography.muted,
             ),
           ),
           Container(
-            color: MahasColors.dark.withValues(alpha: .05),
+            color: AppColors.black.withValues(alpha: .05),
             child: Column(
               children: [
                 Visibility(
@@ -332,7 +333,7 @@ class _InputDetailSetupComponentState<T>
                 alignment: Alignment.centerLeft,
                 child: Text(
                   widget.controller._errorMessage ?? "",
-                  style: TextStyle(color: MahasColors.danger),
+                  style: const TextStyle(color: AppColors.errorColor),
                 ),
               ),
             ),

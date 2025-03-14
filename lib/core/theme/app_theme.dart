@@ -4,8 +4,41 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_color.dart';
 import 'app_typografi.dart';
 
+/// A class that contains all the theme data used in the application.
+/// This class provides a consistent theme system for both light and dark modes.
 class AppTheme {
+  // Common theme properties
+  static const double _borderRadius = 10.0;
+  static const double _elevation = 2.0;
+  static const double borderRadius = _borderRadius;
+  static const double elevation = _elevation;
+  static const Duration _animationDuration = Duration(milliseconds: 200);
+  static const Curve _animationCurve = Curves.easeInOut;
+
+  // Spacing constants
+  static const double spacing4 = 4.0;
+  static const double spacing8 = 8.0;
+  static const double spacing12 = 12.0;
+  static const double spacing16 = 16.0;
+  static const double spacing24 = 24.0;
+  static const double spacing32 = 32.0;
+
+  // Shape constants
+  static final RoundedRectangleBorder _cardShape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(_borderRadius),
+  );
+
+  static final RoundedRectangleBorder _buttonShape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(_borderRadius),
+  );
+
+  static final RoundedRectangleBorder _dialogShape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(_borderRadius),
+  );
+
+  // Light Theme
   static final ThemeData lightTheme = ThemeData(
+    useMaterial3: false,
     fontFamily: GoogleFonts.poppins().fontFamily,
     brightness: Brightness.light,
     primaryColor: AppColors.primaryColor,
@@ -23,11 +56,16 @@ class AppTheme {
     ),
     scaffoldBackgroundColor: AppColors.lightBackgroundColor,
     cardColor: AppColors.lightCardColor,
+    cardTheme: CardTheme(
+      color: AppColors.lightCardColor,
+      shape: _cardShape,
+      elevation: _elevation,
+    ),
     appBarTheme: AppBarTheme(
       backgroundColor: AppColors.primaryColor,
       foregroundColor: Colors.white,
-      titleTextStyle: AppTypography.headline6
-          .copyWith(color: AppColors.lightTextSecondaryColor),
+      titleTextStyle: AppTypography.headline6.copyWith(color: Colors.white),
+      elevation: 0,
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: AppColors.lightCardColor,
@@ -66,25 +104,119 @@ class AppTheme {
         foregroundColor: Colors.white,
         backgroundColor: AppColors.primaryColor,
         textStyle: AppTypography.button,
+        shape: _buttonShape,
+        minimumSize: const Size(88, 40),
+        padding: const EdgeInsets.symmetric(
+            horizontal: spacing16, vertical: spacing8),
       ),
     ),
-    inputDecorationTheme: const InputDecorationTheme(
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        minimumSize: const Size(88, 40),
+        shape: _buttonShape,
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: Colors.white,
-      focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.primaryColor),
+      contentPadding: const EdgeInsets.symmetric(
+          horizontal: spacing16, vertical: spacing12),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(_borderRadius),
+        borderSide: const BorderSide(color: AppColors.lightBorderColor),
       ),
       enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.primaryLightColor),
+        borderRadius: BorderRadius.circular(_borderRadius),
+        borderSide: const BorderSide(color: AppColors.lightBorderColor),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(_borderRadius),
+        borderSide: const BorderSide(color: AppColors.primaryColor),
       ),
       errorBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.errorColor),
+        borderRadius: BorderRadius.circular(_borderRadius),
+        borderSide: const BorderSide(color: AppColors.errorColor),
       ),
+      labelStyle: AppTypography.formLabel
+          .copyWith(color: AppColors.lightTextSecondaryColor),
+      errorStyle: AppTypography.caption.copyWith(color: AppColors.errorColor),
+    ),
+    dialogTheme: DialogTheme(
+      shape: _dialogShape,
+      titleTextStyle: AppTypography.headline6
+          .copyWith(color: AppColors.lightTextPrimaryColor),
+      contentTextStyle: AppTypography.bodyText1
+          .copyWith(color: AppColors.lightTextPrimaryColor),
+      actionsPadding: const EdgeInsets.all(spacing16),
+    ),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: AppColors.darkSurfaceColor,
+      contentTextStyle: AppTypography.bodyText1.copyWith(color: Colors.white),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(_borderRadius),
+      ),
+    ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: AppColors.lightSurfaceColor,
+      shape: RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(_borderRadius)),
+      ),
+    ),
+    drawerTheme: const DrawerThemeData(
+      backgroundColor: AppColors.lightSurfaceColor,
+      elevation: _elevation,
+    ),
+    tabBarTheme: const TabBarTheme(
+      labelColor: AppColors.primaryColor,
+      unselectedLabelColor: AppColors.lightTextSecondaryColor,
+      labelStyle: AppTypography.button,
+      unselectedLabelStyle: AppTypography.button,
+    ),
+    chipTheme: ChipThemeData(
+      backgroundColor: AppColors.lightSecondaryColor,
+      labelStyle: AppTypography.bodyText2
+          .copyWith(color: AppColors.lightTextPrimaryColor),
+      selectedColor: AppColors.primaryColor,
+      secondarySelectedColor: AppColors.primaryColor,
+    ),
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.primaryColor;
+        }
+        return AppColors.lightTextSecondaryColor;
+      }),
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.primaryLightColor;
+        }
+        return AppColors.lightSecondaryColor;
+      }),
+    ),
+    radioTheme: RadioThemeData(
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.primaryColor;
+        }
+        return AppColors.lightTextSecondaryColor;
+      }),
+    ),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.primaryColor;
+        }
+        return AppColors.lightTextSecondaryColor;
+      }),
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
   );
 
+  // Dark Theme
   static final ThemeData darkTheme = ThemeData(
+    useMaterial3: false,
     fontFamily: GoogleFonts.poppins().fontFamily,
     brightness: Brightness.dark,
     primaryColor: AppColors.primaryColor,
@@ -102,11 +234,16 @@ class AppTheme {
     ),
     scaffoldBackgroundColor: AppColors.darkBackgroundColor,
     cardColor: AppColors.darkCardColor,
+    cardTheme: CardTheme(
+      color: AppColors.darkCardColor,
+      shape: _cardShape,
+      elevation: _elevation,
+    ),
     appBarTheme: AppBarTheme(
       backgroundColor: AppColors.primaryColor,
       foregroundColor: Colors.white,
-      titleTextStyle: AppTypography.headline6
-          .copyWith(color: AppColors.darkTextSecondaryColor),
+      titleTextStyle: AppTypography.headline6.copyWith(color: Colors.white),
+      elevation: 0,
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: AppColors.darkCardColor,
@@ -145,20 +282,112 @@ class AppTheme {
         foregroundColor: Colors.white,
         backgroundColor: AppColors.primaryColor,
         textStyle: AppTypography.button,
+        shape: _buttonShape,
+        minimumSize: const Size(88, 40),
+        padding: const EdgeInsets.symmetric(
+            horizontal: spacing16, vertical: spacing8),
       ),
     ),
-    inputDecorationTheme: const InputDecorationTheme(
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        minimumSize: const Size(88, 40),
+        shape: _buttonShape,
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: AppColors.darkSurfaceColor,
-      focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.primaryColor),
+      contentPadding: const EdgeInsets.symmetric(
+          horizontal: spacing16, vertical: spacing12),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(_borderRadius),
+        borderSide: const BorderSide(color: AppColors.darkBorderColor),
       ),
       enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.primaryLightColor),
+        borderRadius: BorderRadius.circular(_borderRadius),
+        borderSide: const BorderSide(color: AppColors.darkBorderColor),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(_borderRadius),
+        borderSide: const BorderSide(color: AppColors.primaryColor),
       ),
       errorBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: AppColors.errorColor),
+        borderRadius: BorderRadius.circular(_borderRadius),
+        borderSide: const BorderSide(color: AppColors.errorColor),
       ),
+      labelStyle: AppTypography.formLabel
+          .copyWith(color: AppColors.darkTextSecondaryColor),
+      errorStyle: AppTypography.caption.copyWith(color: AppColors.errorColor),
+    ),
+    dialogTheme: DialogTheme(
+      shape: _dialogShape,
+      titleTextStyle: AppTypography.headline6
+          .copyWith(color: AppColors.darkTextPrimaryColor),
+      contentTextStyle: AppTypography.bodyText1
+          .copyWith(color: AppColors.darkTextPrimaryColor),
+      actionsPadding: const EdgeInsets.all(spacing16),
+    ),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: AppColors.darkSurfaceColor,
+      contentTextStyle: AppTypography.bodyText1.copyWith(color: Colors.white),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(_borderRadius),
+      ),
+    ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: AppColors.darkSurfaceColor,
+      shape: RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(_borderRadius)),
+      ),
+    ),
+    drawerTheme: const DrawerThemeData(
+      backgroundColor: AppColors.darkSurfaceColor,
+      elevation: _elevation,
+    ),
+    tabBarTheme: const TabBarTheme(
+      labelColor: AppColors.primaryColor,
+      unselectedLabelColor: AppColors.darkTextSecondaryColor,
+      labelStyle: AppTypography.button,
+      unselectedLabelStyle: AppTypography.button,
+    ),
+    chipTheme: ChipThemeData(
+      backgroundColor: AppColors.darkSecondaryColor,
+      labelStyle: AppTypography.bodyText2
+          .copyWith(color: AppColors.darkTextPrimaryColor),
+      selectedColor: AppColors.primaryColor,
+      secondarySelectedColor: AppColors.primaryColor,
+    ),
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.primaryColor;
+        }
+        return AppColors.darkTextSecondaryColor;
+      }),
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.primaryLightColor;
+        }
+        return AppColors.darkSecondaryColor;
+      }),
+    ),
+    radioTheme: RadioThemeData(
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.primaryColor;
+        }
+        return AppColors.darkTextSecondaryColor;
+      }),
+    ),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return AppColors.primaryColor;
+        }
+        return AppColors.darkTextSecondaryColor;
+      }),
     ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
   );

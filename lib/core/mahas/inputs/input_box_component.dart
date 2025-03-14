@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../mahas_colors.dart';
-import '../mahas_themes.dart';
+import '../../theme/app_color.dart';
+import '../../theme/app_theme.dart';
+import '../../theme/app_typografi.dart';
 
 class InputBoxComponent extends StatelessWidget {
   final String? label;
@@ -49,18 +50,18 @@ class InputBoxComponent extends StatelessWidget {
                         children: [
                           Text(
                             label ?? '-',
-                            style: MahasThemes.muted,
+                            style: AppTypography.muted,
                           ),
                           Text(
                             "*",
-                            style: MahasThemes.muted
-                                .copyWith(color: MahasColors.danger),
+                            style: AppTypography.muted
+                                .copyWith(color: AppColors.errorColor),
                           ),
                         ],
                       )
                     : Text(
                         label ?? '-',
-                        style: MahasThemes.muted,
+                        style: AppTypography.muted,
                       ),
               ),
               const Padding(padding: EdgeInsets.all(2)),
@@ -76,13 +77,12 @@ class InputBoxComponent extends StatelessWidget {
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(MahasThemes.borderRadius),
-                    color: MahasColors.dark
+                    borderRadius: BorderRadius.circular(AppTheme.borderRadius),
+                    color: AppColors.black
                         .withValues(alpha: editable ?? false ? .01 : .05),
                     border: errorMessage != null
-                        ? Border.all(color: MahasColors.danger, width: .8)
-                        : Border.all(color: MahasColors.dark, width: .1),
+                        ? Border.all(color: AppColors.errorColor, width: .8)
+                        : Border.all(color: AppColors.black, width: .1),
                   ),
                   padding: childrenSizeBox != null
                       ? null
@@ -144,7 +144,7 @@ class InputBoxComponent extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       errorMessage ?? "",
-                      style: TextStyle(color: MahasColors.danger),
+                      style: const TextStyle(color: AppColors.errorColor),
                     ),
                   ),
                 ),
@@ -168,7 +168,7 @@ class InputBoxComponent extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       errorMessage ?? "",
-                      style: TextStyle(color: MahasColors.danger),
+                      style: const TextStyle(color: AppColors.errorColor),
                     ),
                   ),
                 ),

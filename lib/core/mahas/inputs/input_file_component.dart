@@ -8,7 +8,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-import '../mahas_colors.dart';
+import '../../theme/app_color.dart';
 import 'input_box_component.dart';
 
 enum InputFileType { image, pdf, camera, pdfFile }
@@ -289,7 +289,7 @@ class InputFileComponentState extends State<InputFileComponent> {
               child: widget.controller.strBase64 == null
                   ? const Text(
                       "No File Included",
-                      style: TextStyle(color: MahasColors.grey),
+                      style: TextStyle(color: AppColors.grey),
                     )
                   : const Text("View File"),
             )

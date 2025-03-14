@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../mahas_colors.dart';
+import '../../theme/app_color.dart';
 
 class ShimmerComponent extends StatelessWidget {
   final int count;
@@ -34,13 +34,13 @@ class ShimmerComponent extends StatelessWidget {
           ),
           width: double.infinity,
           height: 16,
-          color: MahasColors.light,
+          color: AppColors.white,
         ),
       );
     }
     return Shimmer.fromColors(
-      baseColor: MahasColors.dark.withValues(alpha: .1),
-      highlightColor: MahasColors.dark.withValues(alpha: .05),
+      baseColor: AppColors.black.withValues(alpha: .1),
+      highlightColor: AppColors.black.withValues(alpha: .05),
       child: Column(
         children: shimmers,
       ),

@@ -59,7 +59,6 @@ class MahasService {
   /// Inisialisasi error handler
   static Future<void> _initErrorHandler() async {
     final logger = LoggerService.instance;
-    logger.i('🛡️ Initializing Error Handler...', tag: 'MAHAS');
 
     final errorHandler = ErrorHandlerService.instance;
 
@@ -87,7 +86,6 @@ class MahasService {
   /// Inisialisasi service locator
   static Future<void> _initServiceLocator() async {
     final logger = LoggerService.instance;
-    logger.i('📦 Initializing Service Locator...', tag: 'MAHAS');
 
     await setupServiceLocator();
 
@@ -97,7 +95,6 @@ class MahasService {
   /// Inisialisasi Firebase (menggunakan FirebaseService yang terpisah)
   static Future<void> _initFirebase() async {
     final logger = LoggerService.instance;
-    logger.i('🔥 Initializing Firebase...', tag: 'MAHAS');
 
     await FirebaseService.instance.init();
 
@@ -107,7 +104,6 @@ class MahasService {
   /// Inisialisasi Storage (menggunakan StorageService yang terpisah)
   static Future<void> _initStorage() async {
     final logger = LoggerService.instance;
-    logger.i('💾 Initializing Storage...', tag: 'MAHAS');
 
     await StorageService.instance.init();
 

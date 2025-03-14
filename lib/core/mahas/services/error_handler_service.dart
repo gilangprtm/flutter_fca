@@ -92,7 +92,7 @@ class ErrorHandlerService {
 
     // Tampilkan UI jika tersedia
     if (context != null) {
-      await _showErrorUI(context, error, stackTrace);
+      //await _showErrorUI(context, error, stackTrace);
     }
   }
 

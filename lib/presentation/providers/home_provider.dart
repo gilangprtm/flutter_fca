@@ -33,19 +33,16 @@ class HomeProvider extends BaseProvider {
   }
 
   void incrementCount() {
-    runGuarded(() {
-      logger.d('Increment count called', tag: logTag);
-      // Contoh pemanggilan service dengan error handling
-      //homeService.getFeaturedProducts();
+    function(() async {
       _count++;
-      notifyListeners();
+      await fetchInitialData();
     }, operationName: 'incrementCount');
   }
 
   Future<void> fetchInitialData() async {
-    return runGuardedAsync(() async {
+    return functionAsync(() async {
       logger.i('Fetching initial data', tag: logTag);
-      await homeService.getFeaturedProducts();
+      await homeService.getHomeScreenData();
       logger.i('Initial data fetched successfully', tag: logTag);
       return;
     }, operationName: 'fetchInitialData');
